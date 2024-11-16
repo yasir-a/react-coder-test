@@ -13,6 +13,9 @@ locals {
   username = data.coder_workspace_owner.me.name
 }
 
+data "coder_workspace_owner" "me" {
+}
+
 data "coder_provisioner" "me" {
 }
 
