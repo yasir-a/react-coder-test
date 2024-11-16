@@ -11,6 +11,11 @@ terraform {
 
 locals {
   username = data.coder_workspace_owner.me.name
+  project_repo_dir="react-coder-test"
+  project_repo_url="https://github.com/yasir-a/${local.project_repo_dir}"
+  default_branch="develop"
+  repos_dir="/home/coder/repos"
+  starting_branch="develop"
 }
 
 data "coder_workspace_owner" "me" {
