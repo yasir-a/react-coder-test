@@ -17,6 +17,7 @@ locals {
   repos_dir="/home/coder/repos"
   starting_branch="${data.coder_parameter.branch.value != "" ? data.coder_parameter.branch.value : local.default_branch}"
 }
+
 data "coder_parameter" "branch"{
   name = "branch"
   display_name = "Starting Branch"
@@ -112,6 +113,7 @@ resource "docker_image" "main" {
   name = "coder-${data.coder_workspace.me.id}"
   build {
     context = "./build"
+    dockerfile = "Dockerfile"
     build_args = {
       USER = local.username
     }
