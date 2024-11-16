@@ -25,16 +25,6 @@ provider "coder" {
 data "coder_workspace" "me" {
 }
 
-data "coder_parameter" "branch"{
-  name = "branch"
-  display_name = "Starting Branch"
-  description = "Enter the starting branch for the workspace. This can be changed through normal git commands after the workspace is created."
-  type = "string"
-  mutable = false
-  default = "${local.default_branch}"
-  
-}
-
 resource "coder_agent" "main" {
   arch                   = data.coder_provisioner.me.arch
   os                     = "linux"
