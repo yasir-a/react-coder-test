@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# terraform file
+./coder/.terraform/
+./coder/.terraform.lock.hcl
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
