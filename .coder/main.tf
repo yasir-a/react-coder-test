@@ -15,7 +15,15 @@ locals {
   project_repo_url="https://github.com/yasir-a/${local.project_repo_dir}"
   default_branch="develop"
   repos_dir="/home/coder/repos"
-  starting_branch="develop"
+  starting_branch="${data.coder_parameter.branch.value != "" ? data.coder_parameter.branch.value : local.default_branch}"
+}
+data "coder_parameter" "branch"{
+  name = "branch"
+  display_name = "Starting Branch"
+  type = "string"
+  description = "Enter the starting branch for the workspace"
+  mutable = false
+  default = "${local.default_branch}"
 }
 
 data "coder_workspace_owner" "me" {
