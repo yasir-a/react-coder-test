@@ -29,7 +29,7 @@ data "coder_workspace" "me" {
 }
 
 resource "coder_agent" "main" {
-  arch                   = data.coder_provisioner.me.arch
+  arch                   = "amd64"
   os                     = "linux"
   startup_script         = <<-EOT
     set -e
