@@ -14,7 +14,7 @@ locals {
   project_repo_dir="react-coder-test"
   project_repo_url="https://github.com/yasir-a/${local.project_repo_dir}"
   default_branch="develop"
-  repos_dir="/home/coder/repos"
+  repos_dir = "/tmp/repos"
   starting_branch="${data.coder_parameter.branch.value != "" ? data.coder_parameter.branch.value : local.default_branch}"
 }
 
@@ -45,25 +45,25 @@ data "coder_workspace" "me" {
 resource "coder_agent" "main" {
   arch                   = "amd64"
   os                     = "linux"
-  startup_script         = <<-EOT
-    set -e
+  startup_script = <<-EOT
+  set -e
+  
+  # Set up repository directory
+  mkdir -p ${local.repos_dir} || echo "Directory already exists"
+  cd ${local.repos_dir}
+  
+  # Clone repository
+  if [ ! -d "${local.project_repo_dir}" ]; then
+    git clone ${local.project_repo_url}
+    cd ${local.project_repo_dir}
+    git checkout ${local.starting_branch}
+  fi
 
-    # Install necessary tools
-    sudo apt-get update && sudo apt-get install -y git curl
+  # Install and start code-server
+  curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix=/tmp/code-server
+  /tmp/code-server/bin/code-server --auth none --port 13337 >/tmp/code-server.log 2>&1 &
+EOT
 
-    # Clone the repository
-    mkdir -p ${local.repos_dir}
-    cd ${local.repos_dir}
-    if [ ! -d "${local.project_repo_dir}" ]; then
-      git clone ${local.project_repo_url}
-      cd ${local.project_repo_dir}
-      git checkout ${local.starting_branch}
-    fi
-
-    # Install and start code-server
-    curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix=/tmp/code-server
-    /tmp/code-server/bin/code-server --auth none --port 13337 >/tmp/code-server.log 2>&1 &
-  EOT
 
   env = {
     GIT_AUTHOR_NAME     = coalesce(data.coder_workspace_owner.me.full_name, data.coder_workspace_owner.me.name)
