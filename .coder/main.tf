@@ -48,8 +48,14 @@ resource "coder_agent" "main" {
   startup_script = <<-EOT
   set -e
   
+  # Install Git
+  if ! command -v git &> /dev/null; then
+    echo "Git not found. Installing..."
+    sudo apt-get update && sudo apt-get install -y git
+  fi
+  
   # Set up repository directory
-  mkdir -p ${local.repos_dir} || echo "Directory already exists"
+  mkdir -p ${local.repos_dir}
   cd ${local.repos_dir}
   
   # Clone repository
@@ -58,11 +64,12 @@ resource "coder_agent" "main" {
     cd ${local.project_repo_dir}
     git checkout ${local.starting_branch}
   fi
-
+  
   # Install and start code-server
   curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix=/tmp/code-server
   /tmp/code-server/bin/code-server --auth none --port 13337 >/tmp/code-server.log 2>&1 &
 EOT
+
 
 
   env = {
